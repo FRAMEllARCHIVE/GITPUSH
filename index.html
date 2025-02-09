@@ -1,55 +1,57 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Google Form Auto-Submit</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Submit Form</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      padding: 20px;
+    }
+    #submitButton {
+      padding: 10px 20px;
+      font-size: 16px;
+      cursor: pointer;
+      background-color: #4CAF50;
+      color: white;
+      border: none;
+      border-radius: 5px;
+    }
+    #submitButton:disabled {
+      background-color: #ccc;
+    }
+  </style>
 </head>
 <body>
-    <h2>Submit File Contents</h2>
-    <textarea id="fileContent" rows="10" cols="50" placeholder="Enter your file contents here..."></textarea>
-    <button onclick="submitForm()">Submit</button>
 
-    <script>
-        function submitForm() {
-            const formUrl = "https://docs.google.com/forms/d/e/1FAIpQLSe86d8flY79aJXrTXBsy0Jh7UhTYYm9YCZOQGobWTH9_xaDXQ/formResponse";
-            const inputText = document.getElementById("fileContent").value;
-            
-            // Split into chunks to fit in form fields (assume ~3000 characters per field)
-            const chunkSize = 3000;
-            let chunks = [];
-            for (let i = 0; i < inputText.length; i += chunkSize) {
-                chunks.push(inputText.substring(i, i + chunkSize));
-            }
+  <h1>Submit Your Data</h1>
 
-            // Ensure we have exactly 9 chunks (fill empty ones if necessary)
-            while (chunks.length < 9) {
-                chunks.push(""); 
-            }
+  <form id="googleForm" action="https://docs.google.com/forms/d/e/1FAIpQLSe86d8flY79aJXrTXBsy0Jh7UhTYYm9YCZOQGobWTH9_xaDXQ/formResponse" method="POST" target="hidden_iframe" onsubmit="submitForm(); return false;">
+    <label for="entry">Enter your data:</label>
+    <textarea id="entry" name="entry.581638671" rows="10" cols="50" placeholder="Enter your long answer here"></textarea><br><br>
+    <button id="submitButton" type="submit">Submit</button>
+  </form>
 
-            // Create form data for submission
-            const formData = new FormData();
-            formData.append("entry.793522142", chunks[0]); // 1st part
-            formData.append("entry.874533562", chunks[1]); // 2nd part
-            formData.append("entry.651472200", chunks[2]); // 3rd part
-            formData.append("entry.1004306388", chunks[3]); // 4th part
-            formData.append("entry.257317439", chunks[4]); // 5th part
-            formData.append("entry.1492476334", chunks[5]); // 6th part
-            formData.append("entry.656315727", chunks[6]); // 7th part
-            formData.append("entry.345315082", chunks[7]); // 8th part
-            formData.append("entry.581638671", chunks[8]); // 9th part
+  <!-- Hidden iframe to submit the form data without refreshing the page -->
+  <iframe name="hidden_iframe" style="display:none;"></iframe>
 
-            // Submit data in the background
-            fetch(formUrl, {
-                method: "POST",
-                body: formData,
-                mode: "no-cors" // Prevent CORS issues
-            }).then(() => {
-                alert("Submitted successfully!");
-            }).catch(error => {
-                console.error("Submission failed:", error);
-            });
-        }
-    </script>
+  <script>
+    function submitForm() {
+      const form = document.getElementById("googleForm");
+      const textarea = document.getElementById("entry");
+
+      // Check if there is any text entered in the textarea
+      if (textarea.value.trim() !== "") {
+        // Enable the submit button (just in case it was disabled)
+        document.getElementById("submitButton").disabled = false;
+        form.submit();
+      } else {
+        // If the textarea is empty, disable the submit button
+        alert("Please enter a value before submitting.");
+      }
+    }
+  </script>
+
 </body>
 </html>
