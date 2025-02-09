@@ -1,142 +1,55 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>GitHub File Uploader</title>
-  <style>
-    body {
-      font-family: Arial, sans-serif;
-    }
-    .modal {
-      display: none;
-      position: fixed;
-      z-index: 1;
-      left: 0;
-      top: 0;
-      width: 100%;
-      height: 100%;
-      overflow: auto;
-      background-color: rgb(0, 0, 0);
-      background-color: rgba(0, 0, 0, 0.4);
-      padding-top: 60px;
-    }
-    .modal-content {
-      background-color: #fefefe;
-      margin: 5% auto;
-      padding: 20px;
-      border: 1px solid #888;
-      width: 80%;
-      max-width: 500px;
-    }
-    .close {
-      color: #aaa;
-      float: right;
-      font-size: 28px;
-      font-weight: bold;
-    }
-    .close:hover,
-    .close:focus {
-      color: black;
-      text-decoration: none;
-      cursor: pointer;
-    }
-    input, textarea {
-      width: 100%;
-      padding: 10px;
-      margin: 10px 0;
-      border: 1px solid #ccc;
-    }
-    button {
-      padding: 10px 15px;
-      background-color: #4CAF50;
-      color: white;
-      border: none;
-      cursor: pointer;
-    }
-    button:hover {
-      background-color: #45a049;
-    }
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Google Form Auto-Submit</title>
 </head>
 <body>
+    <h2>Submit File Contents</h2>
+    <textarea id="fileContent" rows="10" cols="50" placeholder="Enter your file contents here..."></textarea>
+    <button onclick="submitForm()">Submit</button>
 
-<h2>GitHub File Uploader</h2>
-<button id="openModalBtn">Open Modal</button>
+    <script>
+        function submitForm() {
+            const formUrl = "https://docs.google.com/forms/d/e/1FAIpQLSe86d8flY79aJXrTXBsy0Jh7UhTYYm9YCZOQGobWTH9_xaDXQ/formResponse";
+            const inputText = document.getElementById("fileContent").value;
+            
+            // Split into chunks to fit in form fields (assume ~3000 characters per field)
+            const chunkSize = 3000;
+            let chunks = [];
+            for (let i = 0; i < inputText.length; i += chunkSize) {
+                chunks.push(inputText.substring(i, i + chunkSize));
+            }
 
-<div id="myModal" class="modal">
-  <div class="modal-content">
-    <span class="close">&times;</span>
-    <h3>Upload File to GitHub</h3>
-    <form id="uploadForm">
-      <label for="account">Account:</label>
-      <input type="text" id="account" name="account" required>
-      
-      <label for="repo">Repo:</label>
-      <input type="text" id="repo" name="repo" required>
-      
-      <label for="filename">Filename:</label>
-      <input type="text" id="filename" name="filename" required>
-      
-      <label for="fileContents">File Contents:</label>
-      <textarea id="fileContents" name="fileContents" rows="6" required></textarea>
-      
-      <button type="submit">Submit</button>
-    </form>
-  </div>
-</div>
+            // Ensure we have exactly 9 chunks (fill empty ones if necessary)
+            while (chunks.length < 9) {
+                chunks.push(""); 
+            }
 
-<script>
-  var modal = document.getElementById("myModal");
-  var openModalBtn = document.getElementById("openModalBtn");
-  var closeModalBtn = document.getElementsByClassName("close")[0];
-  var uploadForm = document.getElementById("uploadForm");
+            // Create form data for submission
+            const formData = new FormData();
+            formData.append("entry.793522142", chunks[0]); // 1st part
+            formData.append("entry.874533562", chunks[1]); // 2nd part
+            formData.append("entry.651472200", chunks[2]); // 3rd part
+            formData.append("entry.1004306388", chunks[3]); // 4th part
+            formData.append("entry.257317439", chunks[4]); // 5th part
+            formData.append("entry.1492476334", chunks[5]); // 6th part
+            formData.append("entry.656315727", chunks[6]); // 7th part
+            formData.append("entry.345315082", chunks[7]); // 8th part
+            formData.append("entry.581638671", chunks[8]); // 9th part
 
-  openModalBtn.onclick = function() {
-    modal.style.display = "block";
-  }
-
-  closeModalBtn.onclick = function() {
-    modal.style.display = "none";
-  }
-
-  window.onclick = function(event) {
-    if (event.target == modal) {
-      modal.style.display = "none";
-    }
-  }
-
-  uploadForm.onsubmit = function(event) {
-    event.preventDefault();
-
-    var account = document.getElementById("account").value;
-    var repo = document.getElementById("repo").value;
-    var filename = document.getElementById("filename").value;
-    var fileContents = document.getElementById("fileContents").value;
-
-    var maxLength = 1000; // Max length per chunk for Google Form
-    var chunks = [];
-    
-    while (fileContents.length > maxLength) {
-      chunks.push(fileContents.substring(0, maxLength));
-      fileContents = fileContents.substring(maxLength);
-    }
-    chunks.push(fileContents); // Add the remaining part of the content
-
-    var formURL = "https://docs.google.com/forms/d/e/1FAIpQLSe86d8flY79aJXrTXBsy0Jh7UhTYYm9YCZOQGobWTH9_xaDXQ/viewform?";
-    formURL += "entry.2056753610=" + encodeURIComponent(account);
-    formURL += "&entry.2130894310=" + encodeURIComponent(repo);
-    formURL += "&entry.160227837=" + encodeURIComponent(filename);
-
-    chunks.forEach(function(chunk, index) {
-      formURL += "&entry." + (793522142 + index) + "=" + encodeURIComponent(chunk);
-    });
-
-    window.open(formURL, "_blank");
-
-    modal.style.display = "none";
-  }
-</script>
-
+            // Submit data in the background
+            fetch(formUrl, {
+                method: "POST",
+                body: formData,
+                mode: "no-cors" // Prevent CORS issues
+            }).then(() => {
+                alert("Submitted successfully!");
+            }).catch(error => {
+                console.error("Submission failed:", error);
+            });
+        }
+    </script>
 </body>
 </html>
