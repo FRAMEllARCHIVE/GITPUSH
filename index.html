@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>GitPush</title>
+    <title>GitPUSH</title>
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@500;700&display=swap" rel="stylesheet">
     <style>
         body {
@@ -81,7 +81,16 @@
         <h3>GitPUSH</h3>
         <form id="customForm">
             <div class="form-group">
-                <input type="text" id="message" placeholder="Your message" required>
+                <input type="text" id="account" placeholder="Account" required>
+            </div>
+            <div class="form-group">
+                <input type="text" id="repo" placeholder="Repo" required>
+            </div>
+            <div class="form-group">
+                <input type="text" id="filename" placeholder="Filename" required>
+            </div>
+            <div class="form-group">
+                <input type="text" id="contents" placeholder="Contents" required>
             </div>
             <button type="submit">SUBMIT</button>
         </form>
@@ -92,10 +101,17 @@
             event.preventDefault();
 
             let formData = new FormData();
-            let message = document.getElementById("message").value;
-            formData.append("entry.581638671", message);
+            let account = document.getElementById("account").value;
+            let repo = document.getElementById("repo").value;
+            let filename = document.getElementById("filename").value;
+            let contents = document.getElementById("contents").value;
 
-            fetch("https://docs.google.com/forms/d/e/1FAIpQLSe86d8flY79aJXrTXBsy0Jh7UhTYYm9YCZOQGobWTH9_xaDXQ/formResponse", {
+            formData.append("entry.518243938", account);
+            formData.append("entry.1548459692", repo);
+            formData.append("entry.1184359777", filename);
+            formData.append("entry.1958540952", contents);
+
+            fetch("https://docs.google.com/forms/d/e/1FAIpQLSf1rwEelowt5Tb-gYv6Km4sQyMjSq3zBHRZ35dEpM7tETVaUQ/formResponse", {
                 method: "POST",
                 body: formData,
                 mode: "no-cors"
