@@ -3,52 +3,103 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Submit Form</title>
+  <title>Submit Your Data</title>
   <style>
     body {
+      background-color: #1a1a1a;
+      color: #e0e0e0;
       font-family: Arial, sans-serif;
-      padding: 20px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      margin: 0;
     }
-    #submitButton {
-      padding: 10px 20px;
+    .form-container {
+      background-color: #2c2c2c;
+      padding: 30px;
+      border-radius: 10px;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+      width: 100%;
+      max-width: 600px;
+    }
+    h1 {
+      text-align: center;
+      color: #fff;
+    }
+    label {
+      font-size: 18px;
+      color: #ddd;
+      display: block;
+      margin-bottom: 10px;
+    }
+    textarea {
+      width: 100%;
+      height: 150px;
+      padding: 10px;
       font-size: 16px;
-      cursor: pointer;
+      background-color: #444;
+      color: #fff;
+      border: 1px solid #555;
+      border-radius: 5px;
+      resize: vertical;
+    }
+    textarea:focus {
+      outline: none;
+      border-color: #4CAF50;
+    }
+    button {
+      width: 100%;
+      padding: 15px;
       background-color: #4CAF50;
-      color: white;
+      color: #fff;
+      font-size: 18px;
       border: none;
       border-radius: 5px;
+      cursor: pointer;
+      margin-top: 20px;
     }
-    #submitButton:disabled {
-      background-color: #ccc;
+    button:disabled {
+      background-color: #888;
+      cursor: not-allowed;
+    }
+    .alert {
+      text-align: center;
+      margin-top: 20px;
+      color: #4CAF50;
+      display: none;
     }
   </style>
 </head>
 <body>
 
-  <h1>Submit Your Data</h1>
+  <div class="form-container">
+    <h1>Submit Your Data</h1>
+    <form id="googleForm" action="https://docs.google.com/forms/d/e/1FAIpQLSe86d8flY79aJXrTXBsy0Jh7UhTYYm9YCZOQGobWTH9_xaDXQ/formResponse" method="POST" target="hidden_iframe" onsubmit="submitForm(); return false;">
+      <label for="entry">Enter your data:</label>
+      <textarea id="entry" name="entry.581638671" placeholder="Enter your long answer here..."></textarea>
+      <button type="submit">Submit</button>
+    </form>
+    <div id="alert" class="alert">Your data has been successfully submitted!</div>
+  </div>
 
-  <form id="googleForm" action="https://docs.google.com/forms/d/e/1FAIpQLSe86d8flY79aJXrTXBsy0Jh7UhTYYm9YCZOQGobWTH9_xaDXQ/formResponse" method="POST" target="hidden_iframe" onsubmit="submitForm(); return false;">
-    <label for="entry">Enter your data:</label>
-    <textarea id="entry" name="entry.581638671" rows="10" cols="50" placeholder="Enter your long answer here"></textarea><br><br>
-    <button id="submitButton" type="submit">Submit</button>
-  </form>
-
-  <!-- Hidden iframe to submit the form data without refreshing the page -->
   <iframe name="hidden_iframe" style="display:none;"></iframe>
 
   <script>
     function submitForm() {
       const form = document.getElementById("googleForm");
       const textarea = document.getElementById("entry");
+      const alertBox = document.getElementById("alert");
 
-      // Check if there is any text entered in the textarea
       if (textarea.value.trim() !== "") {
-        // Enable the submit button (just in case it was disabled)
-        document.getElementById("submitButton").disabled = false;
         form.submit();
+        alertBox.style.display = "block";  // Show success message
+        textarea.value = "";  // Clear the textarea after submission
+        setTimeout(() => {
+          alertBox.style.display = "none";  // Hide success message after 5 seconds
+        }, 5000);
       } else {
-        // If the textarea is empty, disable the submit button
-        alert("Please enter a value before submitting.");
+        alert("Please enter some data before submitting.");
       }
     }
   </script>
