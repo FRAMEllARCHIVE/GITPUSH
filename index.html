@@ -68,6 +68,15 @@
             letter-spacing: 2px;
         }
 
+        h3 a {
+            text-decoration: none;
+            color: black;
+        }
+
+        h3 a:hover {
+            text-decoration: underline;
+        }
+
         .form-group input:focus {
             outline: none;
             border-color: #4CAF50;
@@ -78,34 +87,50 @@
 <body>
 
     <div class="form-container">
-        <h3>GitPUSH</h3>
+        <h3><a href="#" id="repoLink" target="_blank">GitPUSH</a></h3>
         <form id="customForm">
             <div class="form-group">
-                <input type="text" id="account" placeholder="Account" required>
+                <input type="text" id="account" placeholder="Account" list="accountList" required>
+                <datalist id="accountList"></datalist>
             </div>
             <div class="form-group">
-                <input type="text" id="repo" placeholder="Repo" required>
+                <input type="text" id="repo" placeholder="Repo" list="repoList" required>
+                <datalist id="repoList"></datalist>
             </div>
             <div class="form-group">
-                <input type="text" id="filename" placeholder="Filename" required>
+                <input type="text" id="filename" placeholder="Filename" list="filenameList" required>
+                <datalist id="filenameList"></datalist>
             </div>
             <div class="form-group">
-                <input type="text" id="contents" placeholder="Contents" required>
+                <input type="text" id="contents" placeholder="Contents" list="contentsList" required>
+                <datalist id="contentsList"></datalist>
             </div>
             <button type="submit">SUBMIT</button>
         </form>
     </div>
 
     <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            loadAutocompleteData();
+        });
+
         document.getElementById("customForm").addEventListener("submit", function(event) {
             event.preventDefault();
 
-            let formData = new FormData();
             let account = document.getElementById("account").value;
             let repo = document.getElementById("repo").value;
             let filename = document.getElementById("filename").value;
             let contents = document.getElementById("contents").value;
 
+            saveToLocalStorage("accountList", account);
+            saveToLocalStorage("repoList", repo);
+            saveToLocalStorage("filenameList", filename);
+            saveToLocalStorage("contentsList", contents);
+
+            let repoLink = `https://github.com/${account}/${repo}`;
+            document.getElementById("repoLink").href = repoLink;
+
+            let formData = new FormData();
             formData.append("entry.518243938", account);
             formData.append("entry.1548459692", repo);
             formData.append("entry.1184359777", filename);
@@ -118,10 +143,38 @@
             }).then(() => {
                 alert("Form submitted successfully!");
                 document.getElementById("customForm").reset();
+                loadAutocompleteData();
             }).catch(() => {
                 alert("Error submitting form. Please try again.");
             });
         });
+
+        function saveToLocalStorage(key, value) {
+            if (!value) return;
+            let existing = JSON.parse(localStorage.getItem(key)) || [];
+            if (!existing.includes(value)) {
+                existing.push(value);
+                localStorage.setItem(key, JSON.stringify(existing));
+            }
+        }
+
+        function loadAutocompleteData() {
+            populateDatalist("accountList", "account");
+            populateDatalist("repoList", "repo");
+            populateDatalist("filenameList", "filename");
+            populateDatalist("contentsList", "contents");
+        }
+
+        function populateDatalist(datalistId, inputId) {
+            let data = JSON.parse(localStorage.getItem(datalistId)) || [];
+            let datalist = document.getElementById(datalistId);
+            datalist.innerHTML = "";
+            data.forEach(item => {
+                let option = document.createElement("option");
+                option.value = item;
+                datalist.appendChild(option);
+            });
+        }
     </script>
 
 </body>
