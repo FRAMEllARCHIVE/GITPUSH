@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -158,8 +157,6 @@
             const filename = document.getElementById("filename").value;
             const contents = document.getElementById("contents").value;
             
-            const encodedContents = encodeURIComponent(contents);
-            
             saveToLocalStorage("accountList", account);
             saveToLocalStorage("repoList", repo);
             saveToLocalStorage("filenameList", filename);
@@ -170,7 +167,7 @@
             formData.append("entry.518243938", account);
             formData.append("entry.1548459692", repo);
             formData.append("entry.1184359777", filename);
-            formData.append("entry.1958540952", encodedContents);
+            formData.append("entry.1958540952", contents);
             
             const statusEl = document.getElementById("status");
             statusEl.classList.remove("success", "error");
